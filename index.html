@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8/243 INDEX</title>
+    <script src="https://cdn.jsdelivr.net"></script>
+    <style>
+        :root { --neon: #d2f55e; --black: #0b0b0b; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--black); color: #fff; font-family: -apple-system, sans-serif; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; }
+        .app { width: 100%; max-width: 400px; padding: 25px; }
+        .nav { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 2px; color: #444; margin-bottom: 40px; }
+        .progress { width: 100%; height: 1px; background: #222; margin-bottom: 40px; }
+        #bar { height: 1px; background: var(--neon); width: 100%; transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--neon); }
+        .q-text { font-size: 24px; font-weight: 300; line-height: 1.3; margin-bottom: 40px; min-height: 90px; }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .btn { background: #111; border: 1px solid #222; color: #888; padding: 18px; text-align: left; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        .btn:hover { border-color: var(--neon); color: #fff; background: #050505; }
+        #final { display: none; }
+        .res-phrase { font-size: 26px; line-height: 1.2; font-weight: 500; margin-bottom: 40px; }
+        .code-tag { border-left: 2px solid var(--neon); padding-left: 15px; margin-top: 40px; cursor: pointer; }
+        .code-val { color: var(--neon); font-size: 20px; font-weight: 800; display: block; margin-top: 5px; font-family: monospace; }
+        .copy-hint { font-size: 9px; color: #333; margin-top: 10px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+<div class="app" id="quiz">
+    <div class="nav">TARGET: <span id="u-name" style="color:#fff">USER</span> // UNQ: <span id="u-val">100</span>%</div>
+    <div class="progress"><div id="bar"></div></div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="opt-box"></div>
+</div>
+
+<div class="app" id="final">
+    <div class="nav" style="color:var(--neon)">1 OF 243 MATCH FOUND</div>
+    <div class="res-phrase" id="res-text"></div>
+    <div class="code-tag" id="copy-trigger">
+        <span style="font-size: 10px; color:#444; text-transform: uppercase;">Personal Code</span>
+        <span class="code-val" id="res-code"></span>
+        <div class="copy-hint">Нажми, чтобы скопировать</div>
+    </div>
+</div>
+
+<script>
+    // Контентное дерево (3 варианта на 5 уровней = 243 исхода)
+    const tree = {
+        level0: { q: "Твой импульс сегодня?", a: [
+            { t: "Покой", next: "M", val: "Лаконичная" },
+            { t: "Движение", next: "U", val: "Заряженная" },
+            { t: "Идея", next: "V", val: "Вдохновленная" }
+        ]},
+        M: { q: "Твой идеальный утренний звук?", a: [
+            { t: "Тишина", next: "L3", val: "эстетка," },
+            { t: "Шепот", next: "L3", val: "хранительница," },
+            { t: "Джаз", next: "L3", val: "архитектор," }
+        ]},
+        U: { q: "Твой ритм мегаполиса?", a: [
+            { t: "Драйв", next: "L3", val: "визионер," },
+            { t: "Дрейф", next: "L3", val: "лидер," },
+            { t: "Полет", next: "L3", val: "стратег," }
+        ]},
+        V: { q: "Твой визуальный код?", a: [
+            { t: "Свет", next: "L3", val: "художница," },
+            { t: "Тень", next: "L3", val: "загадка," },
+            { t: "Цвет", next: "L3", val: "энергия," }
+        ]},
+        L3: { q: "Твой способ менять пространство?", a: [
+            { t: "Отсекать лишнее", next: "L4", val: "формирующая новые смыслы" },
+            { t: "Создавать связи", next: "L4", val: "создающая синергию" },
+            { t: "Трансформировать", next: "L4", val: "меняющая контексты" }
+        ]},
+        L4: { q: "Твоя точка концентрации?", a: [
+            { t: "Глубокий дзен", next: "L5", val: "в моменте спокойствия," },
+            { t: "Центр событий", next: "L5", val: "в эпицентре движения," },
+            { t: "Поиск кодов", next: "L5", val: "в поиске вдохновения," }
+        ]},
+        L5: { q: "Твой финальный манифест?", a: [
+            { t: "Качество", next: "end", val: "и это твоя главная привилегия." },
+            { t: "Свобода", next: "end", val: "и мир примет твои условия." },
+            { t: "Действие", next: "end", val: "и это станет твоим преимуществом." }
+        ]
+    };
+
+    let step = 0;
+    let currentKey = "level0";
+    let results = [];
+    const url = new URLSearchParams(window.location.search);
+    
+    // Подхват имени из ссылки ?name=Ксюша
+    const rawName = url.get('name') || 'Guest';
+    document.getElementById('u-name').innerText = rawName.toUpperCase();
+
+    function render() {
+        const data = tree[currentKey];
+        if (!data) return;
+
+        document.getElementById('q-text').innerText = data.q;
+        const box = document.getElementById('opt-box');
+        box.innerHTML = '';
+
+        data.a.forEach(opt => {
+            const b = document.createElement('button');
+            b.className = 'btn';
+            b.innerText = opt.t;
+            b.onclick = () => {
+                results.push(opt.val);
+                if (opt.next === "end") return finish();
+                currentKey = opt.next;
+                step++;
+                render();
+            };
+            box.appendChild(b);
+        });
+
+        const unq = [100, 33.3, 11.1, 3.7, 1.2, 0.41];
+        document.getElementById('bar').style.width = (100 - (step * 20)) + "%";
+        document.getElementById('u-val').innerText = unq[step];
+    }
+
+    function finish() {
+        document.getElementById('quiz').style.display = 'none';
+        document.getElementById('final').style.display = 'block';
+        document.getElementById('res-text').innerText = results.join(' ');
+        
+        // Подхват кода из ссылки ?code=#B1627
+        const finalCode = url.get('code') || 'GOLD-2025';
+        document.getElementById('res-code').innerText = finalCode;
+
+        // Копирование по клику
+        document.getElementById('copy-trigger').onclick = () => {
+            navigator.clipboard.writeText(finalCode);
+            alert('Код скопирован: ' + finalCode);
+        };
+
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#d2f55e', '#ffffff'] });
+    }
+
+    render();
+</script>
+</body>
+</html>
