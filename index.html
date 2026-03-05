@@ -17,24 +17,22 @@
         .options { display: flex; flex-direction: column; gap: 10px; }
         .btn { background: none; border: 1px solid #222; color: #888; padding: 18px; text-align: left; cursor: pointer; transition: 0.3s; font-size: 13px; border-radius: 0; outline: none; }
         .btn:hover { border-color: var(--neon); color: #fff; background: #111; }
-        .btn-start { border-color: var(--neon); color: var(--neon); text-align: center; font-weight: 700; letter-spacing: 2px; margin-top: 20px; }
+        .btn-start { border-color: var(--neon); color: var(--neon); text-align: center; font-weight: 700; letter-spacing: 2px; margin-top: 40px; width: 100%; }
         #quiz-screen, #final-screen { display: none; }
         #start-screen { display: block; text-align: center; }
-        .result-phrase { font-size: 20px; line-height: 1.4; font-weight: 500; margin-bottom: 30px; color: #fff; text-align: left; }
+        .result-phrase { font-size: 19px; line-height: 1.5; font-weight: 400; margin-bottom: 30px; color: #fff; text-align: left; letter-spacing: 0.2px; }
         .code-box { border-left: 2px solid var(--neon); padding-left: 20px; text-align: left; margin-bottom: 30px; }
-        .code-label { font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; }
+        .code-label { font-size: 9px; color: #444; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; }
         #res-code { color: var(--neon); font-size: 20px; font-weight: 800; font-family: monospace; }
-        .ps-text { font-size: 11px; color: #444; line-height: 1.5; text-align: left; border-top: 1px solid #222; padding-top: 20px; }
+        .ps-text { font-size: 10px; color: #333; line-height: 1.4; text-align: left; border-top: 1px solid #1a1a1a; padding-top: 20px; font-weight: 300; }
     </style>
 </head>
 <body>
 
 <div class="app" id="start-screen">
     <div class="top-bar"><span>8 МАРТА</span><span>1/59049</span></div>
-    <div class="q-text" style="font-size: 24px;">Персональный расчет <br>твоего кода</div>
-    <div class="options">
-        <button class="btn btn-start" onclick="startQuiz()">НАЧАТЬ ТЕСТ</button>
-    </div>
+    <div class="q-text" style="font-size: 22px; min-height: auto;">Ваши ответы никто <br>не узнает)</div>
+    <button class="btn btn-start" onclick="startQuiz()">НАЧАТЬ ТЕСТ</button>
 </div>
 
 <div class="app" id="quiz-screen">
@@ -48,10 +46,10 @@
 </div>
 
 <div class="app" id="final-screen">
-    <div class="top-bar" style="color:var(--neon)">КОД ПОЛУЧЕН</div>
+    <div class="top-bar" style="color:var(--neon)">АНАЛИЗ ЗАВЕРШЕН</div>
     <div class="result-phrase" id="res-text"></div>
     <div class="code-box">
-        <span class="code-label">Код сертификата:</span>
+        <span class="code-label">Твой код:</span>
         <span id="res-code"></span>
     </div>
     <div class="ps-text" id="ps-box"></div>
@@ -60,15 +58,15 @@
 <script>
     const content = [
         { q: "Сладкая ложь или горькая правда?", a: ["Правда", "Ложь", "Промолчать"], res: ["Прямолинейная", "Загадочная", "Сдержанная"] },
-        { q: "Сначала делаешь, а потом думаешь?", a: ["Да", "Нет", "Смотрю по ситуации"], res: ["решительная", "внимательная", "непредсказуемая"] },
+        { q: "Сначала делаешь, а потом думаешь?", a: ["Да", "Нет", "Смотрю по ситуации"], res: ["искренняя", "глубокая", "непредсказуемая"] },
         { q: "Что больше ценишь в людях?", a: ["Верность", "Юмор", "Ум"], res: ["душа,", "личность,", "натура,"] },
-        { q: "Твое идеальное утро — это...", a: ["Тишина", "Движ", "Сон до обеда"], res: ["любящая покой,", "обожающая драйв,", "ценящая момент,"] },
-        { q: "В споре ты обычно...", a: ["Спорю до конца", "Ухожу от разговора", "Шучу"], res: ["всегда уверенная,", "умеющая слушать,", "невероятно обаятельная,"] },
-        { q: "Твой идеальный вечер?", a: ["Сериал и плед", "Шумная тусовка", "Прогулка"], res: ["в домашнем тепле", "в центре событий", "в ритме города"] },
-        { q: "Как ты решаешь задачи?", a: ["Планирую всё", "Решаю на ходу", "Плыву по течению"], res: ["с четким планом,", "с легкостью в сердце,", "с верой в себя,"] },
-        { q: "Твоя главная черта?", a: ["Спокойствие", "Харизма", "Доброта"], res: ["сохраняя баланс", "привлекая взгляды", "давая тепло"] },
-        { q: "О чем мечтаешь больше?", a: ["Увидеть мир", "Достичь целей", "Просто быть счастливой"], res: ["для новых открытий,", "для больших побед,", "ради улыбки близких,"] },
-        { q: "Что для тебя 8 Марта?", a: ["Повод для цветов", "Весна и надежды", "День женской силы"], res: ["и это твой день.", "и это твоя весна.", "и это твоя сила."] }
+        { q: "Твое идеальное утро — это...", a: ["Тишина", "Движ", "Сон до обеда"], res: ["любящая спокойствие,", "обожающая драйв,", "ценящая момент,"] },
+        { q: "В споре ты обычно...", a: ["Спорю до конца", "Ухожу от разговора", "Шучу"], res: ["всегда непоколебимая,", "умеющая чувствовать,", "невероятно притягательная,"] },
+        { q: "Твой идеальный вечер?", a: ["Сериал и плед", "Шумная тусовка", "Прогулка"], res: ["в домашней гармонии", "в эпицентре событий", "в вечернем городе"] },
+        { q: "Как ты решаешь задачи?", a: ["Планирую всё", "Решаю на ходу", "Плыву по течению"], res: ["с безупречным стилем,", "с легкостью в каждом шаге,", "с верой в мечту,"] },
+        { q: "Твоя главная черта?", a: ["Спокойствие", "Харизма", "Доброта"], res: ["сохраняя внутренний свет", "привлекая все взгляды", "даря тепло окружающим"] },
+        { q: "О чем мечтаешь больше?", a: ["Увидеть мир", "Достичь целей", "Просто быть счастливой"], res: ["ради новых горизонтов,", "ради больших триумфов,", "ради самой искренней улыбки,"] },
+        { q: "Что для тебя 8 Марта?", a: ["Повод для цветов", "Весна и надежды", "День женской силы"], res: ["и это твой день.", "и это твоя весна.", "и это твоя исключительность."] }
     ];
 
     let step = 0, picks = [], url = new URLSearchParams(window.location.search);
@@ -104,119 +102,7 @@
         document.getElementById('final-screen').style.display = 'block';
         document.getElementById('res-text').innerText = picks.join(' ');
         document.getElementById('res-code').innerText = url.get('code') || '#B1627';
-        document.getElementById('ps-box').innerText = "P.s. Данный сайт был разработан специально для тебя. Шанс на такой же ответ у других — 1 к 59 049, что составляет примерно 0,0017%. Твоя уникальность подтверждена цифровым расчетом.";
-        confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, colors: ['#d2f55e', '#ffffff'] });
-    }
-</script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>8 Марта 1/59049</title>
-    <script src="https://cdn.jsdelivr.net"></script>
-    <style>
-        :root { --neon: #d2f55e; --black: #0b0b0b; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--black); color: #fff; font-family: -apple-system, system-ui, sans-serif; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; }
-        .app { width: 100%; max-width: 400px; padding: 25px; }
-        .top-bar { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 2px; color: #444; margin-bottom: 30px; text-transform: uppercase; font-weight: 600; }
-        .progress-line { width: 100%; height: 1px; background: #222; margin-bottom: 30px; }
-        #bar { height: 1px; background: var(--neon); width: 0%; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--neon); }
-        .q-text { font-size: 20px; font-weight: 300; line-height: 1.3; margin-bottom: 30px; min-height: 60px; letter-spacing: -0.5px; }
-        .options { display: flex; flex-direction: column; gap: 10px; }
-        .btn { background: none; border: 1px solid #222; color: #888; padding: 18px; text-align: left; cursor: pointer; transition: 0.3s; font-size: 13px; border-radius: 0; outline: none; }
-        .btn:hover { border-color: var(--neon); color: #fff; background: #111; }
-        .btn-start { border-color: var(--neon); color: var(--neon); text-align: center; font-weight: 700; letter-spacing: 2px; margin-top: 20px; }
-        #quiz-screen, #final-screen { display: none; }
-        #start-screen { display: block; text-align: center; }
-        .result-phrase { font-size: 20px; line-height: 1.4; font-weight: 500; margin-bottom: 30px; color: #fff; text-align: left; }
-        .code-box { border-left: 2px solid var(--neon); padding-left: 20px; text-align: left; margin-bottom: 30px; }
-        .code-label { font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; }
-        #res-code { color: var(--neon); font-size: 20px; font-weight: 800; font-family: monospace; }
-        .ps-text { font-size: 11px; color: #444; line-height: 1.5; text-align: left; border-top: 1px solid #222; padding-top: 20px; }
-    </style>
-</head>
-<body>
-
-<div class="app" id="start-screen">
-    <div class="top-bar"><span>8 МАРТА</span><span>1/59049</span></div>
-    <div class="q-text" style="font-size: 24px;">Персональный расчет <br>твоего кода</div>
-    <div class="options">
-        <button class="btn btn-start" onclick="startQuiz()">НАЧАТЬ ТЕСТ</button>
-    </div>
-</div>
-
-<div class="app" id="quiz-screen">
-    <div class="top-bar">
-        <span id="u-name" style="color:#fff"></span>
-        <span>УНИКАЛЬНОСТЬ: <span id="u-val">100</span>%</span>
-    </div>
-    <div class="progress-line"><div id="bar"></div></div>
-    <div class="q-text" id="q-text"></div>
-    <div id="opt-box" class="options"></div>
-</div>
-
-<div class="app" id="final-screen">
-    <div class="top-bar" style="color:var(--neon)">КОД ПОЛУЧЕН</div>
-    <div class="result-phrase" id="res-text"></div>
-    <div class="code-box">
-        <span class="code-label">Код сертификата:</span>
-        <span id="res-code"></span>
-    </div>
-    <div class="ps-text" id="ps-box"></div>
-</div>
-
-<script>
-    const content = [
-        { q: "Сладкая ложь или горькая правда?", a: ["Правда", "Ложь", "Промолчать"], res: ["Прямолинейная", "Загадочная", "Сдержанная"] },
-        { q: "Сначала делаешь, а потом думаешь?", a: ["Да", "Нет", "Смотрю по ситуации"], res: ["решительная", "внимательная", "непредсказуемая"] },
-        { q: "Что больше ценишь в людях?", a: ["Верность", "Юмор", "Ум"], res: ["душа,", "личность,", "натура,"] },
-        { q: "Твое идеальное утро — это...", a: ["Тишина", "Движ", "Сон до обеда"], res: ["любящая покой,", "обожающая драйв,", "ценящая момент,"] },
-        { q: "В споре ты обычно...", a: ["Спорю до конца", "Ухожу от разговора", "Шучу"], res: ["всегда уверенная,", "умеющая слушать,", "невероятно обаятельная,"] },
-        { q: "Твой идеальный вечер?", a: ["Сериал и плед", "Шумная тусовка", "Прогулка"], res: ["в домашнем тепле", "в центре событий", "в ритме города"] },
-        { q: "Как ты решаешь задачи?", a: ["Планирую всё", "Решаю на ходу", "Плыву по течению"], res: ["с четким планом,", "с легкостью в сердце,", "с верой в себя,"] },
-        { q: "Твоя главная черта?", a: ["Спокойствие", "Харизма", "Доброта"], res: ["сохраняя баланс", "привлекая взгляды", "давая тепло"] },
-        { q: "О чем мечтаешь больше?", a: ["Увидеть мир", "Достичь целей", "Просто быть счастливой"], res: ["для новых открытий,", "для больших побед,", "ради улыбки близких,"] },
-        { q: "Что для тебя 8 Марта?", a: ["Повод для цветов", "Весна и надежды", "День женской силы"], res: ["и это твой день.", "и это твоя весна.", "и это твоя сила."] }
-    ];
-
-    let step = 0, picks = [], url = new URLSearchParams(window.location.search);
-    const name = url.get('name');
-    if (name) document.getElementById('u-name').innerText = name.toUpperCase();
-
-    function startQuiz() {
-        document.getElementById('start-screen').style.display = 'none';
-        document.getElementById('quiz-screen').style.display = 'block';
-        render();
-    }
-
-    function render() {
-        if (step >= content.length) return finish();
-        const current = content[step];
-        document.getElementById('q-text').innerText = current.q;
-        const box = document.getElementById('opt-box');
-        box.innerHTML = '';
-        current.a.forEach((text, i) => {
-            const b = document.createElement('button');
-            b.className = 'btn'; b.innerText = text;
-            b.onclick = () => { picks.push(current.res[i]); step++; render(); };
-            box.appendChild(b);
-        });
-        
-        const unique = (100 / Math.pow(3, step)).toFixed(step < 3 ? 1 : 4);
-        document.getElementById('bar').style.width = ((step + 1) * 10) + '%';
-        document.getElementById('u-val').innerText = unique;
-    }
-
-    function finish() {
-        document.getElementById('quiz-screen').style.display = 'none';
-        document.getElementById('final-screen').style.display = 'block';
-        document.getElementById('res-text').innerText = picks.join(' ');
-        document.getElementById('res-code').innerText = url.get('code') || '#B1627';
-        document.getElementById('ps-box').innerText = "P.s. Данный сайт был разработан специально для тебя. Шанс на такой же ответ у других — 1 к 59 049, что составляет примерно 0,0017%. Твоя уникальность подтверждена цифровым расчетом.";
+        document.getElementById('ps-box').innerText = "P.s. Сайт разработан специально для вас,вероятность такого же ответа у кого-либо  — 1 к 59 049 (0,0017%), тест был просто так, не дарить же вам просто пластиковые карты)";
         confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, colors: ['#d2f55e', '#ffffff'] });
     }
 </script>
