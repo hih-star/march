@@ -12,12 +12,12 @@
         .app { width: 100%; max-width: 400px; padding: 25px; }
         .top-bar { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 2px; color: #444; margin-bottom: 30px; text-transform: uppercase; font-weight: 600; }
         .progress-line { width: 100%; height: 1px; background: #222; margin-bottom: 30px; }
-        #bar { height: 1px; background: var(--neon); width: 0%; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--neon); }
+        #bar { height: 1px; background: var(--neon); width: 0%; transition: 0.6s ease; box-shadow: 0 0 10px var(--neon); }
         .q-text { font-size: 20px; font-weight: 300; line-height: 1.4; margin-bottom: 30px; min-height: 80px; letter-spacing: -0.5px; }
         .options { display: flex; flex-direction: column; gap: 10px; }
-        .btn { background: none; border: 1px solid #222; color: #888; padding: 18px; text-align: left; cursor: pointer; transition: 0.3s; font-size: 14px; border-radius: 0; outline: none; }
+        .btn { background: none; border: 1px solid #222; color: #888; padding: 18px; text-align: left; cursor: pointer; transition: 0.2s; font-size: 14px; border-radius: 0; outline: none; -webkit-appearance: none; }
         .btn:hover { border-color: var(--neon); color: #fff; background: #111; }
-        .btn-start { border-color: var(--neon); color: var(--neon); text-align: center; font-weight: 700; letter-spacing: 2px; margin-top: 40px; width: 100%; font-size: 14px; }
+        .btn-start { border-color: var(--neon); color: var(--neon); text-align: center; font-weight: 700; letter-spacing: 2px; margin-top: 40px; width: 100%; }
         #quiz-screen, #final-screen { display: none; }
         #start-screen { display: block; text-align: center; }
         .result-phrase { font-size: 19px; line-height: 1.4; font-weight: 500; margin-bottom: 30px; color: #fff; text-align: left; }
@@ -38,7 +38,7 @@
 <div class="app" id="quiz-screen">
     <div class="top-bar">
         <span id="u-name" style="color:#fff"></span>
-        <span>ТАКЖЕ ОТВЕТИЛ КТО-ТО ЕЩЕ: <span id="u-val">100</span>%</span>
+        <span>УНИКАЛЬНОСТЬ: <span id="u-val">100</span>%</span>
     </div>
     <div class="progress-line"><div id="bar"></div></div>
     <div class="q-text" id="q-text">Загрузка...</div>
@@ -65,12 +65,12 @@
         urban: [
             {q: "Твой идеальный город?", a: ["Нью-Йорк", "Токио", "Берлин"], r: ["энергичная", "быстрая", "активная"]},
             {q: "Звук твоего утра?", a: ["Шум проспекта", "Сирены", "Бодрый бит"], r: ["личность,", "натура,", "фигура,"]},
-            {q: "Твой цвет?", a: ["Яркий неон", "Черный винил", "Металл"], r: ["смелая,", "заряженная,", "дерзкая,"]},
+            {q: "Твой цвет ночи?", a: ["Яркий неон", "Черный винил", "Металл"], r: ["смелая,", "заряженная,", "дерзкая,"]},
             {q: "Твое место силы?", a: ["Крыша дома", "Ночной клуб", "Спортзал"], r: ["обожающая драйв,", "взламывающая систему,", "ищущая масштаб,"]},
             {q: "Твой выбор в баре?", a: ["Энергетик", "Кофе", "Коктейль"], r: ["всегда решительная,", "уверенная,", "непредсказуемая,"]},
             {q: "Твой вечер — это...", a: ["Вечеринка", "Гонка", "Встреча"], r: ["в центре событий", "в ритме города", "в свете софитов"]},
             {q: "Как ты решаешь дела?", a: ["Сразу", "С боем", "На лету"], r: ["с азартом,", "с характером,", "с вызовом,"]},
-            {q: "Твоя суперсила?", a: ["Скорость", "Власть", "Харизма"], r: ["зажигая мир", "меняя правила", "диктовала условия"]},
+            {q: "Твоя суперсила?", a: ["Скорость", "Власть", "Харизма"], r: ["зажигая мир", "меняя правила", "диктуя условия"]},
             {q: "Твой манифест?", a: ["Только вперед", "Всё и сразу", "Быть первой"], r: ["ради победы.", "ради успеха.", "ради мечты."] }
         ],
         home: [
@@ -109,29 +109,42 @@
 
     function render() {
         if (step >= 10) return finish();
-        let cur;
         const box = document.getElementById('opt-box');
         box.innerHTML = '';
+        let currentData;
 
         if (step === 0) {
-            cur = tree.root;
-            cur.a.forEach(o => {
-                const b = document.createElement('button'); b.className = 'btn'; b.innerText = o.t;
-                b.onclick = () => { currentBranch = o.branch; picks.push(o.res); step++; render(); };
+            currentData = tree.root;
+            currentData.a.forEach(opt => {
+                const b = document.createElement('button');
+                b.className = 'btn';
+                b.innerText = opt.t;
+                b.onclick = () => { 
+                    currentBranch = opt.branch; 
+                    picks.push(opt.res); 
+                    step++; 
+                    render(); 
+                };
                 box.appendChild(b);
             });
         } else {
-            cur = tree[currentBranch][step - 1];
-            cur.a.forEach((t, i) => {
-                const b = document.createElement('button'); b.className = 'btn'; b.innerText = t;
-                b.onclick = () => { picks.push(cur.res[i]); step++; render(); };
+            currentData = tree[currentBranch][step - 1];
+            currentData.a.forEach((text, i) => {
+                const b = document.createElement('button');
+                b.className = 'btn';
+                b.innerText = text;
+                b.onclick = () => { 
+                    picks.push(currentData.r[i]); 
+                    step++; 
+                    render(); 
+                };
                 box.appendChild(b);
             });
         }
-        document.getElementById('q-text').innerText = cur.q;
-        const u = (100 / Math.pow(3, step)).toFixed(step < 3 ? 1 : 4);
-        document.getElementById('bar').style.width = ((step + 1) * 10) + '%';
-        document.getElementById('u-val').innerText = u;
+        document.getElementById('q-text').innerText = currentData.q;
+        const uVal = (100 / Math.pow(3, step)).toFixed(step < 3 ? 1 : 4);
+        document.getElementById('bar').style.width = (step * 10) + '%';
+        document.getElementById('u-val').innerText = uVal;
     }
 
     function finish() {
@@ -139,8 +152,7 @@
         document.getElementById('final-screen').style.display = 'block';
         document.getElementById('res-text').innerText = picks.join(' ');
         document.getElementById('res-code').innerText = url.get('code') || '#B1627';
-        const p = "P.s. Данный сайт был разработан специально для вас, шанс на такой же ответ у других 1 к 59049, что примерно 0,0017% (Это как если бы одновременно подумать об одном и том же числе от 1 до 59 049)";
-        document.getElementById('ps-box').innerText = p;
+        document.getElementById('ps-box').innerText = "P.s. Данный сайт был разработан специально для вас, шанс на такой же ответ у других 1 к 59049, что примерно 0,0017% (Это как если бы одновременно подумать об одном и том же числе от 1 до 59 049)";
         confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, colors: ['#d2f55e', '#ffffff'] });
     }
 </script>
