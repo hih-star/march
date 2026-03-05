@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>8/243 INDEX</title>
+    <title>8 Марта 1/243</title>
     <script src="https://cdn.jsdelivr.net"></script>
     <style>
         :root { --neon: #d2f55e; --black: #0b0b0b; }
@@ -14,58 +14,59 @@
         #u-name { color: #fff; }
         .progress-line { width: 100%; height: 1px; background: #222; margin-bottom: 40px; }
         #bar { height: 1px; background: var(--neon); width: 0%; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--neon); }
-        .q-text { font-size: 24px; font-weight: 300; line-height: 1.3; margin-bottom: 40px; min-height: 80px; letter-spacing: -0.5px; }
+        .q-text { font-size: 22px; font-weight: 300; line-height: 1.3; margin-bottom: 40px; min-height: 80px; letter-spacing: -0.5px; }
         .options { display: flex; flex-direction: column; gap: 12px; }
         .btn { background: none; border: 1px solid #222; color: #888; padding: 20px; text-align: left; cursor: pointer; transition: 0.3s; font-size: 14px; border-radius: 0; outline: none; }
         .btn:hover { border-color: var(--neon); color: #fff; background: #111; }
         .btn-start { border-color: var(--neon); color: var(--neon); text-align: center; font-weight: 700; letter-spacing: 2px; margin-top: 20px; }
         #quiz-screen, #final-screen { display: none; }
         #start-screen { display: block; text-align: center; }
-        .result-phrase { font-size: 28px; line-height: 1.2; font-weight: 500; margin-bottom: 50px; color: #fff; text-align: left; }
-        .code-box { border-left: 2px solid var(--neon); padding-left: 20px; text-align: left; }
+        .result-phrase { font-size: 26px; line-height: 1.2; font-weight: 500; margin-bottom: 30px; color: #fff; text-align: left; }
+        .code-box { border-left: 2px solid var(--neon); padding-left: 20px; text-align: left; margin-bottom: 30px; }
         .code-label { font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; }
         #res-code { color: var(--neon); font-size: 22px; font-weight: 800; font-family: monospace; }
+        .ps-text { font-size: 11px; color: #444; line-height: 1.4; text-align: left; border-top: 1px solid #222; padding-top: 20px; }
     </style>
 </head>
 <body>
 
-<!-- Экран приветствия -->
 <div class="app" id="start-screen">
-    <div class="top-bar"><span>8 MARCH EDITION</span><span>1/243</span></div>
+    <div class="top-bar"><span>8 МАРТА</span><span>1/243</span></div>
     <div class="q-text">Индивидуальный расчет <br>твоего визуального кода</div>
     <div class="options">
         <button class="btn btn-start" onclick="startQuiz()">НАЧАТЬ ГЕНЕРАЦИЮ</button>
     </div>
 </div>
 
-<!-- Экран теста -->
 <div class="app" id="quiz-screen">
     <div class="top-bar">
         <span id="u-name"></span>
-        <span>UNIQUE: <span id="u-val">100</span>%</span>
+        <span>УНИКАЛЬНОСТЬ: <span id="u-val">100</span>%</span>
     </div>
     <div class="progress-line"><div id="bar"></div></div>
     <div class="q-text" id="q-text"></div>
-    <div class="options" id="opt-box"></div>
+    <div id="opt-box" class="options"></div>
 </div>
 
-<!-- Финальный экран -->
 <div class="app" id="final-screen">
-    <div class="top-bar" style="color:var(--neon)">MATCH FOUND // 1 OF 243</div>
+    <div class="top-bar" style="color:var(--neon)">РЕЗУЛЬТАТ СФОРМИРОВАН</div>
     <div class="result-phrase" id="res-text"></div>
     <div class="code-box">
-        <span class="code-label">Gift Certificate Code</span>
+        <span class="code-label">Код сертификата:</span>
         <span id="res-code"></span>
+    </div>
+    <div class="ps-text">
+        P.s. Данный сайт был разработан специально для вас, шанс на такой же ответ у других 1 к 243, что примерно 0,41%.
     </div>
 </div>
 
 <script>
     const content = [
-        { q: "Твой импульс сегодня?", a: ["Покой", "Движение", "Идея"], res: ["Лаконичная", "Заряженная", "Вдохновленная"] },
-        { q: "Твой идеальный ритм?", a: ["Минимализм", "Урбан", "Вижн"], res: ["эстетка,", "визионер,", "лидер,"] },
-        { q: "Способ менять среду?", a: ["Смыслы", "Связи", "Контекст"], res: ["формирующая смыслы", "создающая синергию", "меняющая правила"] },
-        { q: "Точка концентрации?", a: ["Дзен", "Мегаполис", "Искусство"], res: ["в моменте спокойствия,", "в эпицентре города,", "в поиске вдохновения,"] },
-        { q: "Твой финальный манифест?", a: ["Качество", "Свобода", "Действие"], res: ["и это твоя главная привилегия.", "и мир примет условия.", "и это твой успех."] }
+        { q: "В чем твоя главная сила сегодня?", a: ["Спокойствие", "Энергия", "Идеи"], res: ["Гармоничная", "Заряженная", "Вдохновленная"] },
+        { q: "Твой идеальный ритм жизни?", a: ["Уютный минимализм", "Городской драйв", "Творческий поиск"], res: ["эстетка,", "визионер,", "лидер,"] },
+        { q: "Как ты меняешь мир вокруг?", a: ["Создаю смыслы", "Объединяю людей", "Меняю правила"], res: ["формирующая смыслы", "создающая синергию", "меняющая реальность"] },
+        { q: "Где ты ловишь вдохновение?", a: ["В тишине", "В центре событий", "В искусстве"], res: ["в моменте спокойствия,", "в эпицентре движения,", "в поиске скрытых кодов,"] },
+        { q: "Твой главный план на весну?", a: ["Рост и развитие", "Свобода выбора", "Смелые действия"], res: ["и это твоя главная привилегия.", "и мир примет твои условия.", "и это твой личный успех."] }
     ];
 
     let step = 0;
@@ -83,12 +84,10 @@
 
     function render() {
         if (step >= content.length) return finish();
-        
         const current = content[step];
         document.getElementById('q-text').innerText = current.q;
         const box = document.getElementById('opt-box');
         box.innerHTML = '';
-
         current.a.forEach((text, i) => {
             const b = document.createElement('button');
             b.className = 'btn';
@@ -100,7 +99,6 @@
             };
             box.appendChild(b);
         });
-
         const stats = [100, 33.3, 11.1, 3.7, 1.2, 0.41];
         document.getElementById('bar').style.width = ((step + 1) * 20) + '%';
         document.getElementById('u-val').innerText = stats[step];
@@ -110,17 +108,8 @@
         document.getElementById('quiz-screen').style.display = 'none';
         document.getElementById('final-screen').style.display = 'block';
         document.getElementById('res-text').innerText = picks.join(' ');
-        
-        // Подхват кода из ссылки
-        const finalCode = url.get('code') || 'GOLD-8M';
-        document.getElementById('res-code').innerText = finalCode;
-
-        confetti({
-            particleCount: 150,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: ['#d2f55e', '#ffffff', '#000000']
-        });
+        document.getElementById('res-code').innerText = url.get('code') || '#B1627';
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#d2f55e', '#ffffff'] });
     }
 </script>
 </body>
