@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>8 МАРТА | SPECIAL PROJECT</title>
-    <!-- Подключаем конфетти -->
     <script src="https://cdn.jsdelivr.net"></script>
     <style>
         :root { --pink: #ffb7c5; --hot-pink: #ff8fa3; }
@@ -47,17 +46,15 @@
             <button id="btn-no" class="btn-main">НЕТ</button>
         </div>
     </div>
-
     <div id="quiz-card" class="card">
-        <span class="q-label" id="q-num">Вопрос 1</span>
-        <div class="q-title" id="q-text">...</div>
+        <span class="q-label" id="q-num">Вопрос 1 из 8</span>
+        <div class="q-title" id="q-text">Загрузка...</div>
         <div class="opt-list" id="q-options"></div>
     </div>
-
     <div id="final-card" class="card">
         <h2 class="final-h">С Праздником! ✨</h2>
-        <p class="final-p">Ты — вдохновение и самая важная часть этой весны. Пусть улыбка никогда не гаснет!</p>
-        <p class="joke">Потратил несколько часов на этот код вместо букета. Надеюсь, тебе понравится! ❤️</p>
+        <p class="final-p">Ты — вдохновение, тепло и самая важная часть этой весны. Пусть каждый твой день будет наполнен магией, а улыбка никогда не гаснет. Ты заслуживаешь всего самого прекрасного!</p>
+        <p class="joke">К сожалению денег на нормальный подарок не было, поэтому я потратил несколько часов, чтобы собрать тебе эту программу. Надеюсь, это стоит дороже, чем любой букет из магазина.</p>
     </div>
 </div>
 
@@ -74,10 +71,13 @@
 
     const quizData = [
         { q: "С чего должно начинаться идеальное утро?", a: ["С кофе и тишины", "С охапки тюльпанов", "С теплых слов"] },
+        { q: "Какой цвет лучше всего передает весну?", a: ["Нежно-розовый", "Ярко-зеленый", "Небесно-голубой"] },
         { q: "Твоя суперсила на эту весну?", a: ["Излучать счастье", "Дарить нежность", "Вдохновлять всех"] },
         { q: "Какой аромат у счастья?", a: ["Цветущая сакура", "Свежий дождь", "Домашний уют"] },
         { q: "Идеальный подарок — это...", a: ["Сюрприз", "Душа и внимание", "Эмоции"] },
-        { q: "Веришь ли ты в чудеса?", a: ["Да, они повсюду", "Я сама их творю", "Жду главное!"] }
+        { q: "О чем мечтается сегодня?", a: ["О путешествиях", "О спокойствии", "О переменах"] },
+        { q: "Веришь ли ты в чудеса?", a: ["Да, они повсюду", "Я сама их творю", "Жду главное!"] },
+        { q: "Готова увидеть поздравление?", a: ["Да!", "Конечно!", "Поехали!"] }
     ];
 
     function resize() {
@@ -90,11 +90,15 @@
     class Petal {
         constructor(x, y, burst = false) {
             this.x = x; this.y = y;
-            this.vx = burst ? (Math.random()-0.5)*15 : (Math.random()-0.5)*2;
-            this.vy = burst ? (Math.random()-0.5)*15 : Math.random()*2+1;
-            this.sz = Math.random()*4+3; this.rot = Math.random()*Math.PI*2; this.timer = 0;
+            this.vx = burst ? (Math.random()-0.5)*75 : (Math.random()-0.5)*4;
+            this.vy = burst ? (Math.random()-0.5)*75 : Math.random()*2+2;
+            this.sz = Math.random()*4+3; this.rot = Math.random()*Math.PI*2; this.timer = 0; this.burst = burst;
         }
-        update() { this.x += this.vx; this.y += this.vy; this.timer++; if(this.y > h + 20) this.y = -20; }
+        update() {
+            this.x += this.vx; this.y += this.vy; this.timer++;
+            if(this.burst && this.timer > 12) { this.vx *= 0.88; this.vy = this.vy*0.88 + 0.6; }
+            if(this.y > h + 20) this.y = -20;
+        }
         draw() {
             ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.rot + this.timer*0.04);
             ctx.fillStyle = '#ffb7c5'; ctx.beginPath(); ctx.ellipse(0,0,this.sz,this.sz/1.8,0,0,Math.PI*2); ctx.fill(); ctx.restore();
@@ -107,13 +111,21 @@
         for (let i = 1; i < segments.length; i++) {
             const s = segments[i], p = segments[i-1];
             const angle = Math.atan2(p.y - s.y, p.x - s.x);
-            s.x = p.x - Math.cos(angle) * 12; s.y = p.y - Math.sin(angle) * 12;
+            s.angle = angle; s.x = p.x - Math.cos(angle) * 12; s.y = p.y - Math.sin(angle) * 12;
             ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(angle);
             const prg = i / segments.length;
             const sz = (1 - prg) * 20 + 2;
-            if (i === 1) { // Голова
-                ctx.fillStyle = '#111'; ctx.beginPath(); ctx.ellipse(0,0,25,15,0,0,Math.PI*2); ctx.fill();
-                ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(-8,-6,3,0,7); ctx.arc(-8,6,3,0,7); ctx.fill();
+            if (i === 1) { 
+                ctx.fillStyle = '#111'; ctx.beginPath(); ctx.moveTo(15,0); ctx.bezierCurveTo(35,-25,-25,-25,-30,0); ctx.bezierCurveTo(-25,25,35,25,15,0); ctx.fill();
+                ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(-8,-6,3,0,7); ctx.fill(); ctx.beginPath(); ctx.arc(-8,6,3,0,7); ctx.fill();
+                ctx.strokeStyle = '#ffb7c5'; ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(50,-50,80,-30); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(50,50,80,30); ctx.stroke();
+            }
+            if (i === 12 || i === 22 || i === 32) {
+                const wLen = i === 12 ? 160 : (i === 22 ? 100 : 60);
+                const flap = Math.sin(Date.now() * 0.01 + i) * 35;
+                ctx.strokeStyle = `rgba(255, 183, 197, ${0.8 - prg})`;
+                ctx.lineWidth = 1.5;
+                for(let side of [-1, 1]) { ctx.beginPath(); ctx.moveTo(0,0); ctx.bezierCurveTo(-30, side*(wLen+flap), 120, side*(wLen+60), 15,0); ctx.stroke(); }
             }
             for(let j=0; j<5; j++) {
                 ctx.save(); ctx.rotate((j/5)*Math.PI*2);
@@ -126,9 +138,10 @@
 
     window.startExperience = () => {
         state = 'sakura';
+        segments.forEach(s => { for(let i=0; i<3; i++) petals.push(new Petal(s.x, s.y, true)); });
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('quiz-card').style.display = 'block';
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ffb7c5', '#fff'] });
+        if(typeof confetti === 'function') confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 }, colors: ['#ffb7c5', '#fff'] });
         renderQuestion();
     };
 
@@ -136,18 +149,18 @@
         if (step >= quizData.length) {
             document.getElementById('quiz-card').style.display = 'none';
             document.getElementById('final-card').style.display = 'block';
-            setInterval(() => { if(petals.length < 200) petals.push(new Petal(Math.random()*w, -20)); }, 100);
+            setInterval(() => { if(petals.length < 250) petals.push(new Petal(Math.random()*w, -20)); }, 80);
             return;
         }
         const data = quizData[step];
         document.getElementById('q-num').innerText = `Вопрос ${step + 1} из ${quizData.length}`;
         document.getElementById('q-text').innerText = data.q;
         const box = document.getElementById('q-options');
-        box.innerHTML = ''; 
+        box.innerHTML = '';
         data.a.forEach(ans => {
             const btn = document.createElement('button');
             btn.className = 'opt-btn'; btn.innerText = ans;
-            btn.onclick = () => { confetti({particleCount: 20, spread: 40, colors: ['#ffb7c5']}); step++; renderQuestion(); };
+            btn.onclick = () => { if(typeof confetti === 'function') confetti({particleCount: 30, spread: 50, colors: ['#ffb7c5']}); step++; renderQuestion(); };
             box.appendChild(btn);
         });
     }
@@ -157,7 +170,7 @@
         btnNo.style.position = 'fixed';
         btnNo.style.left = Math.random() * (window.innerWidth - 150) + 'px';
         btnNo.style.top = Math.random() * (window.innerHeight - 100) + 'px';
-        yesScale += 0.3; btnYes.style.transform = `scale(${yesScale})`;
+        yesScale += 0.4; btnYes.style.transform = `scale(${yesScale})`;
     };
     btnNo.onmouseover = moveNo;
     btnNo.ontouchstart = (e) => { e.preventDefault(); moveNo(); };
@@ -165,11 +178,12 @@
     function loop() {
         ctx.fillStyle = 'rgba(5, 5, 5, 0.2)'; ctx.fillRect(0, 0, w, h);
         if (state === 'dragon') drawDragon();
-        else petals.forEach((p, i) => { p.update(); p.draw(); if (p.timer > 800) petals.splice(i, 1); });
+        petals.forEach((p, i) => { p.update(); p.draw(); if (p.timer > 800) petals.splice(i, 1); });
         requestAnimationFrame(loop);
     }
 
     window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    window.addEventListener('touchstart', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
     window.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; }, {passive:false});
     loop();
 </script>
