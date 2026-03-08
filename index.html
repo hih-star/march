@@ -3,42 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>8 МАРТА | SAKURA DRAGON</title>
+    <title>8 МАРТА | SPECIAL PROJECT</title>
     <script src="https://cdn.jsdelivr.net"></script>
     <style>
         :root { --pink: #ffb7c5; --hot-pink: #ff8fa3; }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background: #080808; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; width: 100vw; }
+        body { background: #050505; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; height: 100vh; width: 100vw; }
         
         canvas { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
         .ui-layer { position: relative; z-index: 10; width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center; pointer-events: none; }
         
         .card { 
-            background: rgba(10, 10, 10, 0.96); padding: 40px; border-radius: 30px; 
-            border: 1px solid #333; backdrop-filter: blur(20px); text-align: center;
-            width: 90%; max-width: 500px; box-shadow: 0 40px 100px rgba(0,0,0,0.9);
+            background: rgba(10, 10, 10, 0.98); padding: 40px; border-radius: 30px; 
+            border: 1px solid #333; backdrop-filter: blur(25px); text-align: center;
+            width: 92%; max-width: 500px; box-shadow: 0 40px 100px rgba(0,0,0,1);
             display: none; pointer-events: auto; animation: fadeIn 0.5s ease forwards;
         }
 
-        /* Кнопки */
         #start-screen { display: block; }
-        #start-screen h1 { font-size: 45px; font-weight: 900; margin-bottom: 40px; }
+        h1 { font-size: clamp(30px, 8vw, 45px); font-weight: 900; margin-bottom: 30px; }
         .btns-row { display: flex; gap: 20px; justify-content: center; align-items: center; min-height: 160px; position: relative; }
-        .btn-main { padding: 18px 50px; font-size: 22px; font-weight: 800; border-radius: 15px; border: 2px solid var(--pink); background: none; color: #fff; cursor: pointer; transition: 0.1s; }
-        #btn-yes { background: var(--pink); color: #000; border: none; z-index: 100; }
+        
+        .btn-main { padding: 18px 45px; font-size: 22px; font-weight: 800; border-radius: 15px; border: 2px solid var(--pink); background: none; color: #fff; cursor: pointer; transition: transform 0.1s; }
+        #btn-yes { background: var(--pink); color: #000; border: none; z-index: 100; box-shadow: 0 0 30px rgba(255,183,197,0.3); }
         #btn-no { position: relative; z-index: 50; }
 
-        /* Тест */
-        .q-num { color: var(--pink); font-size: 13px; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 15px; display: block; }
-        .q-title { font-size: 24px; font-weight: 700; margin-bottom: 30px; line-height: 1.3; }
-        .opt-list { display: flex; flex-direction: column; gap: 12px; }
-        .opt-btn { width: 100%; padding: 18px; background: rgba(255,255,255,0.03); border: 1px solid #444; color: #eee; border-radius: 12px; font-size: 17px; cursor: pointer; text-align: left; transition: 0.3s; }
-        .opt-btn:hover { border-color: var(--pink); background: rgba(255,183,197,0.1); transform: translateX(10px); }
+        .q-label { color: var(--pink); font-size: 12px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; display: block; }
+        .q-title { font-size: 24px; font-weight: 700; margin-bottom: 25px; line-height: 1.3; }
+        .opt-list { display: flex; flex-direction: column; gap: 10px; }
+        .opt-btn { width: 100%; padding: 16px; background: rgba(255,255,255,0.04); border: 1px solid #444; color: #eee; border-radius: 12px; font-size: 17px; cursor: pointer; text-align: left; transition: 0.3s; }
+        .opt-btn:hover { border-color: var(--pink); background: rgba(255,183,197,0.1); transform: translateX(8px); }
 
-        /* Финал */
-        .final-h { font-size: 36px; color: var(--pink); font-weight: 900; margin-bottom: 25px; }
+        .final-h { font-size: 36px; color: var(--pink); font-weight: 900; margin-bottom: 20px; }
         .final-p { line-height: 1.8; color: #ddd; margin-bottom: 30px; font-size: 18px; }
-        .joke { font-size: 13px; color: #555; border-top: 1px solid #222; padding-top: 25px; font-style: italic; }
+        .joke { font-size: 13px; color: #555; border-top: 1px solid #222; padding-top: 25px; font-style: italic; line-height: 1.6; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -48,6 +46,7 @@
 <canvas id="c"></canvas>
 
 <div class="ui-layer">
+    <!-- ЭКРАН 1: СТАРТ -->
     <div id="start-screen" class="card">
         <h1>НАЧНЕМ?</h1>
         <div class="btns-row">
@@ -56,16 +55,18 @@
         </div>
     </div>
 
+    <!-- ЭКРАН 2: ТЕСТ -->
     <div id="quiz-card" class="card">
-        <span class="q-num" id="q-num-text">Вопрос 1 из 8</span>
+        <span class="q-label" id="q-num">Вопрос 1 из 8</span>
         <div class="q-title" id="q-text">Загрузка...</div>
         <div class="opt-list" id="q-options"></div>
     </div>
 
+    <!-- ЭКРАН 3: ФИНАЛ -->
     <div id="final-card" class="card">
         <h2 class="final-h">С Праздником! ✨</h2>
         <p class="final-p">
-            Ты — самое прекрасное, что есть в этой весне. Пусть каждый твой день будет полон легкости, красоты и любви. Сияй, вдохновляй и будь счастлива!
+            Ты — вдохновение, тепло и самая важная часть этой весны. Пусть каждый твой день будет наполнен магией, а улыбка никогда не гаснет. Ты заслуживаешь всего самого прекрасного!
         </p>
         <p class="joke">
             К сожалению денег на нормальный подарок не было, поэтому я потратил несколько часов, чтобы собрать тебе эту программу. Надеюсь, это стоит дороже, чем любой букет из магазина.
@@ -79,9 +80,9 @@
     let w, h, state = 'dragon', yesScale = 1;
     let mouse = { x: -1000, y: -1000 };
 
-    // --- ДЕТАЛИЗАЦИЯ ДРАКОНА 1 В 1 ---
+    // --- ДРАКОН (ДЕТАЛИЗАЦИЯ 1 В 1) ---
     const segments = [];
-    const numSegments = 60;
+    const numSegments = 55;
     for(let i=0; i<numSegments; i++) segments.push({ x: -200, y: -200, angle: 0 });
 
     function resize() {
@@ -97,44 +98,40 @@
 
         for (let i = 1; i < numSegments; i++) {
             const s = segments[i], p = segments[i-1];
-            const dx = p.x - s.x, dy = p.y - s.y;
-            const angle = Math.atan2(dy, dx);
+            const angle = Math.atan2(p.y - s.y, p.x - s.x);
             s.angle = angle;
-            s.x = p.x - Math.cos(angle) * 13;
-            s.y = p.y - Math.sin(angle) * 13;
+            s.x = p.x - Math.cos(angle) * 12;
+            s.y = p.y - Math.sin(angle) * 12;
 
             ctx.save();
             ctx.translate(s.x, s.y);
             ctx.rotate(angle);
             const prg = i / numSegments;
-            const sz = (1 - prg) * 22 + 2;
+            const sz = (1 - prg) * 20 + 2;
 
-            // ГОЛОВА
-            if (i === 1) {
+            if (i === 1) { // ГОЛОВА
                 ctx.fillStyle = '#111';
                 ctx.beginPath(); ctx.moveTo(15,0); ctx.bezierCurveTo(35,-25,-25,-25,-30,0); ctx.bezierCurveTo(-25,25,35,25,15,0); ctx.fill();
                 ctx.fillStyle = '#fff';
-                ctx.beginPath(); ctx.arc(-8,-8,3,0,7); ctx.fill(); ctx.beginPath(); ctx.arc(-8,8,3,0,7); ctx.fill();
-                ctx.strokeStyle = varColor(prg); ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(60,-60,100,-20); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(60,60,100,20); ctx.stroke();
+                ctx.beginPath(); ctx.arc(-8,-6,3,0,7); ctx.fill(); ctx.beginPath(); ctx.arc(-8,6,3,0,7); ctx.fill();
+                ctx.strokeStyle = '#ffb7c5'; ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(50,-50,80,-30); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(50,50,80,30); ctx.stroke();
             }
 
-            // ПЛАВНИКИ (КАК НА ФОТО)
-            if (i === 10 || i === 20 || i === 30) {
-                const wLen = i === 10 ? 180 : (i === 20 ? 100 : 60);
-                const flap = Math.sin(Date.now() * 0.01 + i) * 30;
-                ctx.strokeStyle = `rgba(255, 183, 197, ${0.7 - prg})`;
+            if (i === 12 || i === 22 || i === 32) { // ПЛАВНИКИ/КРЫЛЬЯ
+                const wLen = i === 12 ? 160 : (i === 22 ? 100 : 60);
+                const flap = Math.sin(Date.now() * 0.01 + i) * 35;
+                ctx.strokeStyle = `rgba(255, 183, 197, ${0.8 - prg})`;
                 ctx.lineWidth = 1.5;
                 for(let side of [-1, 1]) {
                     ctx.beginPath(); ctx.moveTo(0,0);
-                    ctx.bezierCurveTo(-wLen/2, side*(wLen+flap), wLen, side*(wLen/2), 10,0);
+                    ctx.bezierCurveTo(-30, side*(wLen+flap), 120, side*(wLen+60), 15,0);
                     ctx.stroke();
                 }
             }
 
-            // ЧЕШУЯ
-            for(let j=0; j<5; j++) {
+            for(let j=0; j<5; j++) { // ЧЕШУЯ
                 ctx.save(); ctx.rotate((j/5)*Math.PI*2);
-                ctx.fillStyle = i<5 ? '#fff' : `rgba(255,183,197,${1-prg})`;
+                ctx.fillStyle = i<6 ? '#fff' : `rgba(255,183,197,${1-prg})`;
                 ctx.beginPath(); ctx.ellipse(sz*0.5,0,sz,sz*0.5,0,0,Math.PI*2); ctx.fill();
                 ctx.restore();
             }
@@ -142,18 +139,17 @@
         }
     }
 
-    function varColor(p) { return `rgba(255,183,197,${1-p})`; }
-
     class Petal {
         constructor(x, y, burst = false) {
             this.x = x; this.y = y;
-            this.vx = burst ? (Math.random()-0.5)*70 : (Math.random()-0.5)*4;
-            this.vy = burst ? (Math.random()-0.5)*70 : Math.random()*2+2;
+            this.vx = burst ? (Math.random()-0.5)*75 : (Math.random()-0.5)*4;
+            this.vy = burst ? (Math.random()-0.5)*75 : Math.random()*2+2;
             this.sz = Math.random()*4+3; this.rot = Math.random()*Math.PI*2; this.timer = 0; this.burst = burst;
         }
         update() {
-            this.x += this.vx; this.y += this.vy; this.timer++;
-            if(this.burst && this.timer > 15) { this.vx *= 0.88; this.vy = this.vy*0.88 + 0.6; }
+            this.x += this.vx; this.y += this.vy;
+            this.timer++;
+            if(this.burst && this.timer > 12) { this.vx *= 0.88; this.vy = this.vy*0.88 + 0.6; } // ТОРМОЖЕНИЕ МЕТЕОРОВ
             if(this.y > h + 20) this.y = -20;
         }
         draw() {
@@ -166,14 +162,14 @@
 
     // --- ТЕСТ (8 ВОПРОСОВ) ---
     const quizData = [
-        { q: "С чего должно начинаться идеальное весеннее утро?", a: ["С кофе и тишины", "С букета тюльпанов", "С объятий"] },
+        { q: "С чего должно начинаться идеальное утро?", a: ["С кофе и тишины", "С охапки тюльпанов", "С теплых слов"] },
         { q: "Какой цвет лучше всего передает весну?", a: ["Нежно-розовый", "Ярко-зеленый", "Небесно-голубой"] },
-        { q: "Если бы ты была стихией, то какой?", a: ["Теплый ветерок", "Горная река", "Солнечный луч"] },
-        { q: "Твоя главная суперсила сегодня?", a: ["Дарить счастье", "Вдохновлять", "Создавать уют"] },
+        { q: "Если бы ты была стихией, то какой?", a: ["Ласковый ветерок", "Яркое солнце", "Горный поток"] },
+        { q: "Твоя суперсила на эту весну?", a: ["Излучать счастье", "Дарить нежность", "Вдохновлять всех"] },
+        { q: "Какой аромат у счастья?", a: ["Цветущая сакура", "Свежий дождь", "Домашний уют"] },
         { q: "Идеальный подарок — это...", a: ["Сюрприз", "Душа и внимание", "Эмоции"] },
-        { q: "Веришь ли ты в чудеса?", a: ["Да!", "Я сама их творю", "Жду главное чудо"] },
-        { q: "О чем мечтается этой весной?", a: ["О путешествиях", "О спокойствии", "О переменах"] },
-        { q: "Какой аромат у счастья?", a: ["Цветущая сакура", "Свежий дождь", "Домашний уют"] }
+        { q: "О чем мечтается сегодня?", a: ["О путешествиях", "О спокойствии", "О переменах"] },
+        { q: "Веришь ли ты в чудеса?", a: ["Да, они повсюду", "Я сама их творю", "Жду главное!"] }
     ];
     let step = 0;
 
@@ -190,23 +186,23 @@
         if (step >= quizData.length) {
             document.getElementById('quiz-card').style.display = 'none';
             document.getElementById('final-card').style.display = 'block';
-            setInterval(() => { if(petals.length < 250) petals.push(new Petal(Math.random()*w, -20)); }, 100);
+            setInterval(() => { if(petals.length < 250) petals.push(new Petal(Math.random()*w, -20)); }, 80);
             return;
         }
         const data = quizData[step];
-        document.getElementById('q-num-text').innerText = `Вопрос ${step + 1} из ${quizData.length}`;
+        document.getElementById('q-num').innerText = `Вопрос ${step + 1} из ${quizData.length}`;
         document.getElementById('q-text').innerText = data.q;
         const box = document.getElementById('q-options');
-        box.innerHTML = '';
+        box.innerHTML = ''; // ЧИСТИМ СТАРЫЕ КНОПКИ
         data.a.forEach(ans => {
-            const b = document.createElement('button');
-            b.className = 'opt-btn'; b.innerText = ans;
-            b.onclick = () => { confetti({particleCount: 30, spread: 40, colors: ['#ffb7c5']}); step++; renderQuestion(); };
-            box.appendChild(b);
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn'; btn.innerText = ans;
+            btn.onclick = () => { confetti({particleCount: 30, spread: 50, colors: ['#ffb7c5']}); step++; renderQuestion(); };
+            box.appendChild(btn);
         });
     }
 
-    // --- КНОПКА НЕТ ---
+    // --- КНОПКА "НЕТ" ---
     const btnNo = document.getElementById('btn-no'), btnYes = document.getElementById('btn-yes');
     const moveNo = () => {
         btnNo.style.position = 'fixed';
@@ -218,7 +214,7 @@
     btnNo.ontouchstart = (e) => { e.preventDefault(); moveNo(); };
 
     function loop() {
-        ctx.fillStyle = 'rgba(8, 8, 8, 0.2)'; ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = 'rgba(5, 5, 5, 0.2)'; ctx.fillRect(0, 0, w, h);
         if (state === 'dragon') drawDragon();
         else petals.forEach((p, i) => { p.update(); p.draw(); if (p.timer > 800) petals.splice(i, 1); });
         requestAnimationFrame(loop);
