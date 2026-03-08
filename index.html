@@ -6,9 +6,9 @@
     <title>8 МАРТА | SPECIAL PROJECT</title>
     <script src="https://cdn.jsdelivr.net"></script>
     <style>
-        :root { --pink: #ffb7c5; --hot-pink: #ff8fa3; }
+        :root { --pink: #ffb7c5; --hot-pink: #ff8fa3; --bg: #0d0d0d; }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background: #050505; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; width: 100vw; }
+        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', Roboto, sans-serif; overflow: hidden; height: 100vh; width: 100vw; }
         
         canvas { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
 
@@ -17,40 +17,39 @@
         .card { 
             background: rgba(10, 10, 10, 0.95); padding: 40px; border-radius: 30px; 
             border: 1px solid #333; backdrop-filter: blur(20px); text-align: center;
-            width: 90%; max-width: 500px; box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-            display: none; animation: fadeIn 0.5s ease forwards;
+            width: 92%; max-width: 500px; box-shadow: 0 40px 100px rgba(0,0,0,0.9);
+            display: none; animation: slideIn 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
         }
-        
-        /* Начальный экран */
+        @keyframes slideIn { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Стартовый экран */
         #start-screen { display: block; }
-        #start-screen h1 { font-size: clamp(30px, 8vw, 45px); font-weight: 900; margin-bottom: 40px; }
-        .btns-row { display: flex; gap: 25px; justify-content: center; align-items: center; min-height: 150px; }
+        #start-screen h1 { font-size: 40px; font-weight: 900; margin-bottom: 40px; letter-spacing: -1px; }
+        .btns-row { display: flex; gap: 30px; justify-content: center; align-items: center; min-height: 200px; position: relative; }
         
         .btn-main { 
-            padding: 18px 50px; font-size: 20px; font-weight: 800; border-radius: 15px;
+            padding: 18px 50px; font-size: 22px; font-weight: 800; border-radius: 16px;
             border: 2px solid var(--pink); background: none; color: #fff; cursor: pointer;
             transition: transform 0.1s; white-space: nowrap; 
         }
-        #btn-yes { background: var(--pink); color: #000; border: none; z-index: 100; }
-        #btn-no { position: relative; z-index: 50; }
+        #btn-yes { background: var(--pink); color: #000; border: none; z-index: 100; box-shadow: 0 0 30px rgba(255,183,197,0.3); }
+        #btn-no { position: relative; z-index: 50; transition: all 0.2s ease; }
 
         /* Тест */
-        .q-label { color: var(--pink); font-size: 12px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; display: block; }
-        .q-title { font-size: 24px; font-weight: 700; margin-bottom: 25px; line-height: 1.3; }
-        .opt-list { display: flex; flex-direction: column; gap: 10px; }
+        .q-label { color: var(--pink); font-size: 13px; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 15px; display: block; }
+        .q-title { font-size: 24px; font-weight: 700; margin-bottom: 30px; line-height: 1.4; color: #fff; }
+        .opt-list { display: grid; gap: 12px; }
         .opt-btn {
-            width: 100%; padding: 16px; background: rgba(255,255,255,0.05);
-            border: 1px solid #444; color: #eee; border-radius: 12px;
-            font-size: 16px; cursor: pointer; text-align: left; transition: 0.2s;
+            width: 100%; padding: 18px; background: rgba(255,255,255,0.03);
+            border: 1px solid #444; color: #ddd; border-radius: 15px;
+            font-size: 17px; cursor: pointer; text-align: left; transition: 0.3s;
         }
-        .opt-btn:hover { border-color: var(--pink); background: rgba(255,183,197,0.1); transform: translateX(10px); }
+        .opt-btn:hover { border-color: var(--pink); background: rgba(255,183,197,0.1); transform: translateX(10px); color: #fff; }
 
         /* Финал */
-        .final-h { font-size: 38px; color: var(--pink); font-weight: 900; margin-bottom: 20px; }
-        .final-p { line-height: 1.8; color: #ddd; margin-bottom: 30px; font-size: 17px; }
-        .joke { font-size: 13px; color: #555; border-top: 1px solid #222; padding-top: 25px; font-style: italic; line-height: 1.6; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .final-h { font-size: 36px; color: var(--pink); font-weight: 900; margin-bottom: 25px; }
+        .final-p { line-height: 1.8; color: #ccc; margin-bottom: 35px; font-size: 18px; }
+        .money-joke { font-size: 14px; color: #555; border-top: 1px solid #222; padding-top: 30px; font-style: italic; line-height: 1.7; }
     </style>
 </head>
 <body>
@@ -58,7 +57,7 @@
 <canvas id="c"></canvas>
 
 <div class="ui-layer">
-    <!-- ЭКРАН 1: СТАРТ -->
+    <!-- ЭКРАН 1 -->
     <div id="start-screen" class="card">
         <h1>НАЧНЕМ?</h1>
         <div class="btns-row">
@@ -67,22 +66,22 @@
         </div>
     </div>
 
-    <!-- ЭКРАН 2: ТЕСТ -->
+    <!-- ЭКРАН 2 -->
     <div id="quiz-card" class="card">
         <span class="q-label" id="q-num">Вопрос 1 из 8</span>
-        <div class="q-title" id="q-text">Загрузка...</div>
+        <div class="q-title" id="q-text">Загрузка вопроса...</div>
         <div class="opt-list" id="q-options"></div>
     </div>
 
-    <!-- ЭКРАН 3: ФИНАЛ -->
+    <!-- ЭКРАН 3 -->
     <div id="final-card" class="card">
         <h2 class="final-h">С Праздником! ✨</h2>
         <p class="final-p">
-            Ты — вдохновение, тепло и самая красивая часть этой весны. Пусть каждый твой день будет наполнен магией, а улыбка никогда не гаснет. Ты заслуживаешь всего самого прекрасного в этом мире!
+            Ты — вдохновение, тепло и самая важная часть нашей жизни. Пусть эта весна принесет тебе столько радости, сколько лепестков сейчас кружится вокруг. Сияй, люби и будь счастлива!
         </p>
-        <p class="joke">
+        <div class="money-joke">
             К сожалению денег на нормальный подарок не было, поэтому я потратил несколько часов, чтобы собрать тебе эту программу. Надеюсь, это стоит дороже, чем любой букет из магазина.
-        </p>
+        </div>
     </div>
 </div>
 
@@ -92,10 +91,10 @@
     let w, h, state = 'dragon', yesScale = 1;
     let mouse = { x: -1000, y: -1000 };
 
-    // --- ДЕТАЛИЗАЦИЯ ДРАКОНА ---
+    // --- СТРУКТУРНЫЙ ДРАКОН (КАК НА ФОТО) ---
     const segments = [];
-    const numSegments = 55;
-    for(let i=0; i<numSegments; i++) segments.push({ x: -100, y: -100, angle: 0 });
+    const numSegments = 60;
+    for(let i=0; i<numSegments; i++) segments.push({ x: w/2, y: h/2, angle: 0 });
 
     function resize() {
         w = canvas.width = window.innerWidth;
@@ -105,6 +104,7 @@
     resize();
 
     function drawDragon() {
+        // Голова следует за мышью
         segments[0].x += (mouse.x - segments[0].x) * 0.15;
         segments[0].y += (mouse.y - segments[0].y) * 0.15;
 
@@ -115,7 +115,7 @@
             const dy = p.y - s.y;
             const angle = Math.atan2(dy, dx);
             s.angle = angle;
-            const dist = 12;
+            const dist = 14; 
             s.x = p.x - Math.cos(angle) * dist;
             s.y = p.y - Math.sin(angle) * dist;
 
@@ -124,52 +124,68 @@
             ctx.rotate(angle);
 
             const progress = i / numSegments;
-            const size = (1 - progress) * 22 + 2;
+            const size = (1 - progress) * 25 + 2;
 
-            // ЧЕШУЯ ИЗ ЛЕПЕСТКОВ
-            for(let j=0; j<5; j++) {
-                ctx.save();
-                ctx.rotate((j / 5) * Math.PI * 2);
-                ctx.fillStyle = i < 6 ? '#fff' : `rgba(255, 183, 197, ${1 - progress})`;
+            // 1. ГОЛОВА (Cabeza)
+            if (i === 1) {
+                ctx.fillStyle = '#1a1a1a';
                 ctx.beginPath();
-                ctx.ellipse(size * 0.4, 0, size, size * 0.5, 0, 0, Math.PI * 2);
+                ctx.moveTo(10, 0);
+                ctx.bezierCurveTo(30, -25, -20, -25, -25, 0);
+                ctx.bezierCurveTo(-20, 25, 30, 25, 10, 0);
                 ctx.fill();
-                ctx.restore();
+                // Глаза
+                ctx.fillStyle = varColor(progress);
+                ctx.beginPath(); ctx.arc(-5, -7, 3, 0, 7); ctx.fill();
+                ctx.beginPath(); ctx.arc(-5, 7, 3, 0, 7); ctx.fill();
+                // Усы
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(60, -60, 100, -20); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(60, 60, 100, 20); ctx.stroke();
             }
 
-            // КРЫЛЬЯ
-            if (i === 12 || i === 22) {
-                const wLen = i === 12 ? 160 : 100;
-                const flap = Math.sin(Date.now() * 0.01) * 40;
-                ctx.strokeStyle = `rgba(255, 183, 197, ${0.8 - progress})`;
-                ctx.lineWidth = 2;
+            // 2. ПЛАВНИКИ (Aletas) - как на фото на 8 и 14 сегменте
+            if (i === 8 || i === 14 || i === 22) {
+                const wingLen = i === 8 ? 180 : (i === 14 ? 120 : 70);
+                const flap = Math.sin(Date.now() * 0.008 + i) * 30;
+                ctx.strokeStyle = `rgba(255, 183, 197, ${0.6 - progress})`;
+                ctx.lineWidth = 1.5;
                 for(let side of [-1, 1]) {
                     ctx.beginPath();
                     ctx.moveTo(0, 0);
-                    ctx.bezierCurveTo(-40, side * (wLen + flap), 120, side * (wLen + 60), 20, 0);
+                    // Много тонких линий для эффекта перьев/туши
+                    for(let l=0; l<3; l++) {
+                        ctx.bezierCurveTo(-wingLen/2, side*(wingLen+flap+l*10), wingLen, side*(wingLen/2), 10, 0);
+                    }
                     ctx.stroke();
                 }
             }
 
-            // ГОЛОВА
-            if (i === 1) {
-                ctx.fillStyle = '#fff';
-                ctx.beginPath(); ctx.arc(-8, -6, 3, 0, 7); ctx.fill();
-                ctx.beginPath(); ctx.arc(-8, 6, 3, 0, 7); ctx.fill();
-                ctx.strokeStyle = '#ffb7c5';
-                ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(50, -50, 80, -30); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(50, 50, 80, 30); ctx.stroke();
+            // 3. ПОЗВОНОЧНИК (Espina) - чешуя из лепестков
+            const petalCount = i < 10 ? 6 : 4;
+            for(let j=0; j<petalCount; j++) {
+                ctx.save();
+                ctx.rotate((j / petalCount) * Math.PI * 2);
+                ctx.fillStyle = i < 5 ? '#fff' : `rgba(255, 183, 197, ${1 - progress})`;
+                ctx.beginPath();
+                ctx.ellipse(size * 0.5, 0, size, size * 0.4, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
             }
+            
             ctx.restore();
         }
     }
+
+    function varColor(p) { return `rgba(255, 183, 197, ${1-p})`; }
 
     // --- ЛЕПЕСТКИ САКУРЫ ---
     class Petal {
         constructor(x, y, burst = false) {
             this.x = x; this.y = y;
-            this.vx = burst ? (Math.random() - 0.5) * 70 : (Math.random() - 0.5) * 4;
-            this.vy = burst ? (Math.random() - 0.5) * 70 : Math.random() * 2 + 2;
+            this.vx = burst ? (Math.random() - 0.5) * 75 : (Math.random() - 0.5) * 4;
+            this.vy = burst ? (Math.random() - 0.5) * 75 : Math.random() * 2 + 2;
             this.size = Math.random() * 4 + 3;
             this.rot = Math.random() * Math.PI * 2;
             this.timer = 0;
@@ -188,36 +204,34 @@
             ctx.translate(this.x, this.y);
             ctx.rotate(this.rot + this.timer * 0.04);
             ctx.fillStyle = '#ffb7c5';
-            ctx.beginPath();
-            ctx.ellipse(0, 0, this.size, this.size/1.7, 0, 0, Math.PI*2);
-            ctx.fill();
+            ctx.beginPath(); ctx.ellipse(0, 0, this.size, this.size/1.8, 0, 0, Math.PI*2); ctx.fill();
             ctx.restore();
         }
     }
 
     let petals = [];
 
-    // --- ЛОГИКА ТЕСТА ---
+    // --- ТЕСТ ---
     const quizData = [
-        { q: "С чего должно начинаться идеальное утро?", a: ["С кофе и тишины", "С завтрака в постель", "С улыбки любимых"] },
-        { q: "Какой цвет лучше всего передает весну?", a: ["Нежно-розовый", "Ярко-зеленый", "Небесно-голубой"] },
+        { q: "С чего должно начинаться идеальное утро?", a: ["С кофе и тишины", "С букета тюльпанов", "С теплых объятий"] },
+        { q: "Какой аромат лучше всего передает весну?", a: ["Свежесть дождя", "Цветущая сакура", "Запах мимозы"] },
         { q: "Твоя главная суперсила сегодня?", a: ["Излучать счастье", "Дарить тепло", "Вдохновлять всех"] },
-        { q: "Если бы ты была цветком, то каким?", a: ["Гордая роза", "Нежный тюльпан", "Загадочный лотос"] },
-        { q: "Что важнее всего в подарке?", a: ["Сюрприз", "Душа и внимание", "Практичность"] },
-        { q: "Идеальный вечер этой весной?", a: ["Прогулка под звездами", "Уютный просмотр кино", "Шумная вечеринка"] },
-        { q: "Какой аромат у счастья?", a: ["Свежескошенная трава", "Цветущая вишня", "Мамин пирог"] },
-        { q: "Веришь ли ты в чудеса?", a: ["Да, они повсюду", "Я сама их создаю", "Жду главное чудо"] }
+        { q: "Идеальное весеннее приключение — это...", a: ["Поездка к морю", "Пикник в парке", "Спонтанный поход"] },
+        { q: "Что важнее всего в подарке?", a: ["Душа и внимание", "Сюрприз", "Польза"] },
+        { q: "Какой цвет сегодня твой?", a: ["Нежно-розовый", "Ярко-зеленый", "Солнечный"] },
+        { q: "О чем мечтается этой весной?", a: ["О путешествиях", "Об уюте", "О переменах"] },
+        { q: "Веришь ли ты в чудеса?", a: ["Да, они повсюду", "Я творю их сама", "Жду главное"] }
     ];
     let step = 0;
 
     function startExperience() {
         state = 'sakura';
         segments.forEach(s => {
-            for(let i=0; i<10; i++) petals.push(new Petal(s.x, s.y, true));
+            for(let i=0; i<12; i++) petals.push(new Petal(s.x, s.y, true));
         });
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('quiz-card').style.display = 'block';
-        confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 }, colors: ['#ffb7c5', '#fff'] });
+        confetti({ particleCount: 250, spread: 80, origin: { y: 0.6 }, colors: ['#ffb7c5', '#fff'] });
         renderQuestion();
     }
 
@@ -225,9 +239,7 @@
         if (step >= quizData.length) {
             document.getElementById('quiz-card').style.display = 'none';
             document.getElementById('final-card').style.display = 'block';
-            setInterval(() => {
-                if(petals.length < 250) petals.push(new Petal(Math.random()*w, -20));
-            }, 80);
+            setInterval(() => { if(petals.length < 300) petals.push(new Petal(Math.random()*w, -20)); }, 70);
             return;
         }
         const data = quizData[step];
@@ -240,31 +252,30 @@
             btn.className = 'opt-btn';
             btn.innerText = ans;
             btn.onclick = () => {
-                confetti({ particleCount: 30, spread: 50, colors: ['#ffb7c5'] });
-                step++;
-                renderQuestion();
+                confetti({ particleCount: 40, spread: 50, colors: ['#ffb7c5'] });
+                step++; renderQuestion();
             };
             box.appendChild(btn);
         });
     }
 
-    // --- КНОПКА НЕТ ---
+    // --- КНОПКА "НЕТ" ---
     const btnNo = document.getElementById('btn-no');
     const btnYes = document.getElementById('btn-yes');
 
-    function moveNo() {
+    const moveNo = () => {
         btnNo.style.position = 'fixed';
-        btnNo.style.left = Math.random() * (window.innerWidth - 150) + 'px';
-        btnNo.style.top = Math.random() * (window.innerHeight - 100) + 'px';
-        yesScale += 0.4;
+        btnNo.style.left = Math.random() * (w - 200) + 100 + 'px';
+        btnNo.style.top = Math.random() * (h - 100) + 50 + 'px';
+        yesScale += 0.45;
         btnYes.style.transform = `scale(${yesScale})`;
-    }
+    };
     btnNo.onmouseover = moveNo;
     btnNo.ontouchstart = (e) => { e.preventDefault(); moveNo(); };
 
-    // --- ЦИКЛ АНИМАЦИИ ---
+    // --- ЦИКЛ ---
     function loop() {
-        ctx.fillStyle = 'rgba(5, 5, 5, 0.2)';
+        ctx.fillStyle = 'rgba(13, 13, 13, 0.25)';
         ctx.fillRect(0, 0, w, h);
 
         if (state === 'dragon') {
@@ -279,10 +290,7 @@
     }
 
     window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-    window.addEventListener('touchmove', e => { 
-        mouse.x = e.touches[0].clientX; 
-        mouse.y = e.touches[0].clientY; 
-    }, {passive: false});
+    window.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; }, {passive:false});
 
     loop();
 </script>
