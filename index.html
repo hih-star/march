@@ -1,15 +1,84 @@
-<!-- Добавь это в head, если еще нет, для работы конфетти -->
-<script src="https://cdn.jsdelivr.net"></script>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>8 МАРТА | SPECIAL PROJECT</title>
+    <!-- Подключаем конфетти -->
+    <script src="https://cdn.jsdelivr.net"></script>
+    <style>
+        :root { --pink: #ffb7c5; --hot-pink: #ff8fa3; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { background: #050505; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; height: 100vh; width: 100vw; }
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
+        .ui-layer { position: relative; z-index: 10; width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+        .card { 
+            background: rgba(10, 10, 10, 0.98); padding: 40px; border-radius: 30px; 
+            border: 1px solid #333; backdrop-filter: blur(25px); text-align: center;
+            width: 92%; max-width: 500px; box-shadow: 0 40px 100px rgba(0,0,0,1);
+            display: none; pointer-events: auto; animation: fadeIn 0.5s ease forwards;
+        }
+        #start-screen { display: block; }
+        h1 { font-size: clamp(30px, 8vw, 45px); font-weight: 900; margin-bottom: 30px; }
+        .btns-row { display: flex; gap: 20px; justify-content: center; align-items: center; min-height: 160px; position: relative; }
+        .btn-main { padding: 18px 45px; font-size: 22px; font-weight: 800; border-radius: 15px; border: 2px solid var(--pink); background: none; color: #fff; cursor: pointer; transition: transform 0.1s; }
+        #btn-yes { background: var(--pink); color: #000; border: none; z-index: 100; box-shadow: 0 0 30px rgba(255,183,197,0.3); }
+        #btn-no { position: relative; z-index: 50; }
+        .q-label { color: var(--pink); font-size: 12px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; display: block; }
+        .q-title { font-size: 24px; font-weight: 700; margin-bottom: 25px; line-height: 1.3; }
+        .opt-list { display: flex; flex-direction: column; gap: 10px; }
+        .opt-btn { width: 100%; padding: 16px; background: rgba(255,255,255,0.04); border: 1px solid #444; color: #eee; border-radius: 12px; font-size: 17px; cursor: pointer; text-align: left; transition: 0.3s; }
+        .opt-btn:hover { border-color: var(--pink); background: rgba(255,183,197,0.1); transform: translateX(8px); }
+        .final-h { font-size: 36px; color: var(--pink); font-weight: 900; margin-bottom: 20px; }
+        .final-p { line-height: 1.8; color: #ddd; margin-bottom: 30px; font-size: 18px; }
+        .joke { font-size: 13px; color: #555; border-top: 1px solid #222; padding-top: 25px; font-style: italic; line-height: 1.6; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<div class="ui-layer">
+    <div id="start-screen" class="card">
+        <h1>НАЧНЕМ?</h1>
+        <div class="btns-row">
+            <button id="btn-yes" class="btn-main" onclick="startExperience()">ДА</button>
+            <button id="btn-no" class="btn-main">НЕТ</button>
+        </div>
+    </div>
+
+    <div id="quiz-card" class="card">
+        <span class="q-label" id="q-num">Вопрос 1</span>
+        <div class="q-title" id="q-text">...</div>
+        <div class="opt-list" id="q-options"></div>
+    </div>
+
+    <div id="final-card" class="card">
+        <h2 class="final-h">С Праздником! ✨</h2>
+        <p class="final-p">Ты — вдохновение и самая важная часть этой весны. Пусть улыбка никогда не гаснет!</p>
+        <p class="joke">Потратил несколько часов на этот код вместо букета. Надеюсь, тебе понравится! ❤️</p>
+    </div>
+</div>
 
 <script>
     const canvas = document.getElementById('c');
     const ctx = canvas.getContext('2d');
     let w, h, state = 'dragon', yesScale = 1;
     let mouse = { x: -1000, y: -1000 };
+    let petals = [];
+    let step = 0;
 
     const segments = [];
-    const numSegments = 55;
-    for(let i=0; i<numSegments; i++) segments.push({ x: -200, y: -200, angle: 0 });
+    for(let i=0; i<55; i++) segments.push({ x: -200, y: -200, angle: 0 });
+
+    const quizData = [
+        { q: "С чего должно начинаться идеальное утро?", a: ["С кофе и тишины", "С охапки тюльпанов", "С теплых слов"] },
+        { q: "Твоя суперсила на эту весну?", a: ["Излучать счастье", "Дарить нежность", "Вдохновлять всех"] },
+        { q: "Какой аромат у счастья?", a: ["Цветущая сакура", "Свежий дождь", "Домашний уют"] },
+        { q: "Идеальный подарок — это...", a: ["Сюрприз", "Душа и внимание", "Эмоции"] },
+        { q: "Веришь ли ты в чудеса?", a: ["Да, они повсюду", "Я сама их творю", "Жду главное!"] }
+    ];
 
     function resize() {
         w = canvas.width = window.innerWidth;
@@ -18,81 +87,50 @@
     window.addEventListener('resize', resize);
     resize();
 
-    // --- ЛОГИКА ДРАКОНА ---
-    function drawDragon() {
-        segments[0].x += (mouse.x - segments[0].x) * 0.15;
-        segments[0].y += (mouse.y - segments[0].y) * 0.15;
-
-        for (let i = 1; i < numSegments; i++) {
-            const s = segments[i], p = segments[i-1];
-            const angle = Math.atan2(p.y - s.y, p.x - s.x);
-            s.angle = angle;
-            s.x = p.x - Math.cos(angle) * 12;
-            s.y = p.y - Math.sin(angle) * 12;
-
-            ctx.save();
-            ctx.translate(s.x, s.y);
-            ctx.rotate(angle);
-            const prg = i / numSegments;
-            const sz = (1 - prg) * 20 + 2;
-
-            if (i === 1) {
-                ctx.fillStyle = '#111';
-                ctx.beginPath(); ctx.moveTo(15,0); ctx.bezierCurveTo(35,-25,-25,-25,-30,0); ctx.bezierCurveTo(-25,25,35,25,15,0); ctx.fill();
-                ctx.fillStyle = '#fff';
-                ctx.beginPath(); ctx.arc(-8,-6,3,0,7); ctx.fill(); ctx.beginPath(); ctx.arc(-8,6,3,0,7); ctx.fill();
-            }
-
-            for(let j=0; j<5; j++) {
-                ctx.save(); ctx.rotate((j/5)*Math.PI*2);
-                ctx.fillStyle = i<6 ? '#fff' : `rgba(255,183,197,${1-prg})`;
-                ctx.beginPath(); ctx.ellipse(sz*0.5,0,sz,sz*0.5,0,0,Math.PI*2); ctx.fill();
-                ctx.restore();
-            }
-            ctx.restore();
-        }
-    }
-
     class Petal {
         constructor(x, y, burst = false) {
             this.x = x; this.y = y;
             this.vx = burst ? (Math.random()-0.5)*15 : (Math.random()-0.5)*2;
             this.vy = burst ? (Math.random()-0.5)*15 : Math.random()*2+1;
-            this.sz = Math.random()*4+3; this.rot = Math.random()*Math.PI*2; this.timer = 0; this.burst = burst;
+            this.sz = Math.random()*4+3; this.rot = Math.random()*Math.PI*2; this.timer = 0;
         }
-        update() {
-            this.x += this.vx; this.y += this.vy;
-            this.timer++;
-            if(this.y > h + 20) this.y = -20;
-        }
+        update() { this.x += this.vx; this.y += this.vy; this.timer++; if(this.y > h + 20) this.y = -20; }
         draw() {
             ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.rot + this.timer*0.04);
             ctx.fillStyle = '#ffb7c5'; ctx.beginPath(); ctx.ellipse(0,0,this.sz,this.sz/1.8,0,0,Math.PI*2); ctx.fill(); ctx.restore();
         }
     }
 
-    let petals = [];
-    let step = 0;
+    function drawDragon() {
+        segments[0].x += (mouse.x - segments[0].x) * 0.15;
+        segments[0].y += (mouse.y - segments[0].y) * 0.15;
+        for (let i = 1; i < segments.length; i++) {
+            const s = segments[i], p = segments[i-1];
+            const angle = Math.atan2(p.y - s.y, p.x - s.x);
+            s.x = p.x - Math.cos(angle) * 12; s.y = p.y - Math.sin(angle) * 12;
+            ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(angle);
+            const prg = i / segments.length;
+            const sz = (1 - prg) * 20 + 2;
+            if (i === 1) { // Голова
+                ctx.fillStyle = '#111'; ctx.beginPath(); ctx.ellipse(0,0,25,15,0,0,Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(-8,-6,3,0,7); ctx.arc(-8,6,3,0,7); ctx.fill();
+            }
+            for(let j=0; j<5; j++) {
+                ctx.save(); ctx.rotate((j/5)*Math.PI*2);
+                ctx.fillStyle = i<6 ? '#fff' : `rgba(255,183,197,${1-prg})`;
+                ctx.beginPath(); ctx.ellipse(sz*0.5,0,sz,sz*0.5,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+            }
+            ctx.restore();
+        }
+    }
 
-    const quizData = [
-        { q: "С чего должно начинаться идеальное утро?", a: ["С кофе и тишины", "С охапки тюльпанов", "С теплых слов"] },
-        { q: "Какой цвет лучше всего передает весну?", a: ["Нежно-розовый", "Ярко-зеленый", "Небесно-голубой"] },
-        { q: "Твоя суперсила на эту весну?", a: ["Излучать счастье", "Дарить нежность", "Вдохновлять всех"] },
-        { q: "Какой аромат у счастья?", a: ["Цветущая сакура", "Свежий дождь", "Домашний уют"] },
-        { q: "Идеальный подарок — это...", a: ["Сюрприз", "Душа и внимание", "Эмоции"] },
-        { q: "О чем мечтается сегодня?", a: ["О путешествиях", "О спокойствии", "О переменах"] },
-        { q: "Веришь ли ты в чудеса?", a: ["Да, они повсюду", "Я сама их творю", "Жду главное!"] }
-    ];
-
-    function startExperience() {
+    window.startExperience = () => {
         state = 'sakura';
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('quiz-card').style.display = 'block';
-        if(typeof confetti === 'function') {
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ffb7c5', '#fff'] });
-        }
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ffb7c5', '#fff'] });
         renderQuestion();
-    }
+    };
 
     function renderQuestion() {
         if (step >= quizData.length) {
@@ -108,13 +146,8 @@
         box.innerHTML = ''; 
         data.a.forEach(ans => {
             const btn = document.createElement('button');
-            btn.className = 'opt-btn'; 
-            btn.innerText = ans;
-            btn.onclick = () => { 
-                if(typeof confetti === 'function') confetti({particleCount: 20, spread: 40, colors: ['#ffb7c5']}); 
-                step++; 
-                renderQuestion(); 
-            };
+            btn.className = 'opt-btn'; btn.innerText = ans;
+            btn.onclick = () => { confetti({particleCount: 20, spread: 40, colors: ['#ffb7c5']}); step++; renderQuestion(); };
             box.appendChild(btn);
         });
     }
@@ -124,32 +157,21 @@
         btnNo.style.position = 'fixed';
         btnNo.style.left = Math.random() * (window.innerWidth - 150) + 'px';
         btnNo.style.top = Math.random() * (window.innerHeight - 100) + 'px';
-        yesScale += 0.3; 
-        btnYes.style.transform = `scale(${yesScale})`;
+        yesScale += 0.3; btnYes.style.transform = `scale(${yesScale})`;
     };
     btnNo.onmouseover = moveNo;
     btnNo.ontouchstart = (e) => { e.preventDefault(); moveNo(); };
 
     function loop() {
-        ctx.fillStyle = 'rgba(5, 5, 5, 0.15)'; 
-        ctx.fillRect(0, 0, w, h);
-        if (state === 'dragon') {
-            drawDragon();
-        } else {
-            petals.forEach((p, i) => { 
-                p.update(); 
-                p.draw(); 
-                if (p.timer > 1000) petals.splice(i, 1); 
-            });
-        }
+        ctx.fillStyle = 'rgba(5, 5, 5, 0.2)'; ctx.fillRect(0, 0, w, h);
+        if (state === 'dragon') drawDragon();
+        else petals.forEach((p, i) => { p.update(); p.draw(); if (p.timer > 800) petals.splice(i, 1); });
         requestAnimationFrame(loop);
     }
 
     window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-    window.addEventListener('touchmove', e => { 
-        mouse.x = e.touches[0].clientX; 
-        mouse.y = e.touches[0].clientY; 
-    }, {passive:false});
-    
+    window.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; }, {passive:false});
     loop();
 </script>
+</body>
+</html>
